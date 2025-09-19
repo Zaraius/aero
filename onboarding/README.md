@@ -93,7 +93,7 @@ Steps:
     ```bash
     docker build -t ros2-mavros .
     ```
-
+    Note: if it says you don't have permission run newgrp docker or run docker with sudo preceding it
     2. Allow local root to access the X server (run on host)
 
     ```bash
@@ -103,10 +103,11 @@ Steps:
     3. Run the container (uses your host DISPLAY so GUI windows appear)
 
     ```bash
-    docker run -it --rm \
+    docker run -it \
         --env="DISPLAY=$DISPLAY" \
         --env="QT_X11_NO_MITSHM=1" \
         --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+        -v $(pwd):/root/workspace \
         --name ros2-mavros \
         ros2-mavros
     ```
@@ -114,38 +115,27 @@ Steps:
     4. Inside the container
 
     ```bash
+    cd /root/workspace/
     chmod +x setup.sh
     ./setup.sh
     # Start the turtlesim node
     ros2 run turtlesim turtlesim_node
     ```
 
-    5. In another terminal (host or a second container with DISPLAY forwarded), run the teleop node
-
+    5. In another terminal (by running: docker exec -it ros2-mavros bash), run the teleop node
     ```bash
     ros2 run turtlesim turtle_teleop_key
     ```
-
+    Note, you may need to run newgrp docker or run docker with sudo preceding it
     If both windows appear, you're all set — explore ROS 2 and the turtlesim tutorial next.
 
-    ### Hardware / SITL examples (optional)
-
-    Use these examples only if you need to connect to real hardware (Pixhawk) or run SITL. They show how to expose serial devices or use host networking.
-
-    - Pixhawk serial access (expose device):
-
+    From now on if you want to start the docker container you need to first
     ```bash
-    docker run -it --rm --device=/dev/ttyACM0 --name ros2-mavros ros2-mavros
-    # inside container:
-    ros2 launch mavros apm.launch.py fcu_url:=serial:///dev/ttyACM0:57600
+    docker start -ai ros2-mavros
     ```
-
-    - SITL on host (use host network so container can reach 127.0.0.1 UDP ports):
-
+    and then for any subsequent terminals run:
     ```bash
-    docker run -it --rm --net=host --name ros2-mavros ros2-mavros
-    # inside:
-    ros2 launch mavros apm.launch.py fcu_url:=udp://127.0.0.1:14550@14555
+    docker exec -it ros2-mavros bash
     ```
 
     ### Helpful links
