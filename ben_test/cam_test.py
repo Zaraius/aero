@@ -5,15 +5,16 @@ class CameraFootage:
     base_dir = ""
     video_capture = None
 
-    def __init__(self, dir="/home/aero/ben_test/photos/"):
-        self.video_capture = cv2.VideoCapture(0)
+    def __init__(self, dir="/home/aero/aero/ben_test/photos/"):
+        self.video_capture = cv2.VideoCapture(-1)
         self.base_dir = dir
 
 
     def clear_folder(self):
-        photos = [name for name in os.listdir(self.base_dir)]
-        for i in photos:
-            os.remove(self.base_dir+i)
+        if os.path.exists(self.base_dir):
+            photos = [name for name in os.listdir(self.base_dir)]
+            for i in photos:
+                os.remove(self.base_dir+i)
 
 
     def save_frame(self):
