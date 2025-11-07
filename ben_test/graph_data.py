@@ -1,7 +1,11 @@
+import matplotlib
+matplotlib.use('TkAgg')
 from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
 from math import pi, sin, cos
+
+
 
 data = pd.read_csv('/home/aero/aero/ben_test/data.csv')
 A = [data['Ax'].tolist(), data['Ay'].tolist(), data['Az'].tolist()]
@@ -12,9 +16,11 @@ dt = 0.1
 a, v, vi, dx, va, r = [[0,0,0] for i in range(6)]
 X = [[0], [0], [0]]
 
+va_c = [G[0][0], G[1][0], G[2][0]]
+
 for i in range(len(A[0])):
     a = [A[0][i], A[1][i], A[2][i]]
-    va = [G[0][i], G[1][i], G[2][i]]
+    va = [G[0][i] - va_c[0], G[1][i] - va_c[1], G[2][i] - va_c[2]]
     for dim in range(3):
         a[dim] = A[dim][i]
         av = G[dim][i]
@@ -34,15 +40,16 @@ for i in range(len(A[0])):
 
     for dim in range(3):
         X[dim].append(X[dim][len(X[dim])-1] + pos[dim][0])
-        X[dim] = X[dim][-2:]
     
 
-#fig = plt.figure()
-#ax = plt.axes(projection='3d')
-#ax.set_title('drone position')
-#ax.set_xlabel('x axis')
-#ax.set_ylabel('y axis')
-#ax.set_zlabel('z axis')
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.set_title('drone position')
+ax.set_xlabel('x axis')
+ax.set_ylabel('y axis')
+ax.set_zlabel('z axis')
 
-#ax.plot3D(X[0], X[1], X[2], 'red')
-#plt.show()
+ax.plot3D(X[0], X[1], X[2], 'red')
+plt.show()
+print(X)
+plt.savefig('/home/aero/aero/ben_test/graph.png')
